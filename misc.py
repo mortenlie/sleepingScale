@@ -5,7 +5,6 @@ from openpyxl import load_workbook, Workbook
 def getLocalHour():
     secEpoch = time.time()
     localTime = time.localtime(secEpoch)
-    #print("tm_hour:", result.tm_hour)
     return localTime.tm_hour
 
 def getLocalDate():
@@ -17,33 +16,36 @@ def getLocalDate():
 
     return (localDay, localMonth, localYear)
 
+def getNextIndex(filename, sheet):
+    sheet = workbook.active
+    max_row = sheet.max_row
+    return max_row + 1
+
 
 def excelWriter(date, weight, filename):
     print("Writing")
     workbook = load_workbook(filename = filename)
     sheet = workbook.active
+    index = getNextIndex(filename, sheet)
+    
+    dateCell = "A" + str(index)
+    weightCell = "B" + str(index)
 
-    # Write what you want into a specific cell
-    sheet["C1"] = "writing ;)"
+    dateFormated = str(date[0]) + "." + str(date[1]) + "." + str(date[2])
 
-    # Save the spreadsheet
+
+    sheet[dateCell] = dateFormated
+    sheet[weightCell] = weight
     workbook.save(filename=filename)
 
-    '''
-    with open(filename, "w") as csvfile:
-
-        fieldnames = ["Dato", "Vekt"]
-        writer = csv.DictWriter(csvfile,fieldnames = fieldnames)
-        writer.writeheader()
-        writer.writerow({fieldnames[0]: date, fieldnames[1]: weight})
-    '''
-
+def measureWeight():
+    # Measure weight
+    return 0
 
 
 def logg(filename):
     print('Logging initiated')
-    #weight = measureWeight()
-    weight = 80
+    weight = measureWeight()
 
     date = getLocalDate()
     excelWriter(date,weight,filename)
